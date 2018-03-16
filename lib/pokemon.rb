@@ -13,12 +13,13 @@ class Pokemon
   end
 
   def self.save(name, type, db)
-   db.execute("INSERT INTO pokemon (name, type) VALUES(?, ?)", name, type)
+   db.execute("INSERT INTO pokemon (name, type) VALUES(:name, :type)", "name" => name, "type" => type)
   end
 
   def self.find(id, db)
     db.results_as_hash = true 
-    results = db.execute("SELECT * FROM pokemon WHERE id=?", id).first
+    results = db.execute("SELECT * FROM pokemon WHERE id = :id", "id" => id)
+    results = results.first
     name = results['name']
     type = results['type']
     hp = results['hp']
@@ -27,6 +28,6 @@ class Pokemon
   end
   
   def alter_hp(hp, db)
-    db.execute("UPDATE pokemon SET hp=? WHERE id=?", hp, @id)
+    db.execute("UPDATE pokemon SET hp = :hp WHERE id = :id", "hp" => hp, "id" => @id)
   end
 end
