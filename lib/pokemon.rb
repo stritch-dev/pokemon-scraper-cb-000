@@ -4,7 +4,7 @@ class Pokemon
   attr_accessor :id, :name, :type, :db, :hp
 
 
- def initialize(id:, name:, type:, db:, hp: nil )
+  def initialize(id:, name:, type:, db:, hp: nil )
     @id = id
     @name = name
     @type = type
@@ -17,12 +17,13 @@ class Pokemon
   end
 
   def self.find(id, db)
-    results = db.execute("SELECT * FROM pokemon WHERE id=?", id)
-    if results[0][3].nil?
-      Pokemon.new(id: results[0][0], name: results[0][1], type: results[0][2], db: db)
-    else
-      Pokemon.new(id: results[0][0], name: results[0][1], type: results[0][2], hp: results[0][3], db: db)
-    end
+    db.results_as_hash = true 
+    results = db.execute("SELECT * FROM pokemon WHERE id=?", id).first
+    name = results['name']
+    type = results['type']
+    hp = results['hp']
+    
+    Pokemon.new(id: id, name: name, type: type,  db: db, hp: hp)
   end
   
   def alter_hp(hp, db)
